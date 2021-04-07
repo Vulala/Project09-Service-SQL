@@ -1,0 +1,67 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.4'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'jacoco'
+}
+
+group = 'service-sql'
+version = '1.0.0'
+sourceCompatibility = '15'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+	
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'org.postgresql:postgresql'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+jacoco {
+    toolVersion = "0.8.6"
+}
+
+test {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport // End the test task by doing a jacoco report
+
+jacocoTestReport {
+	dependsOn test // Tests are required to run before generating the report
+	finalizedBy jacocoTestCoverageVerification // End with a jacoco code coverage verification
+
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled true
+        html.destination file("build/reports/jacocoHtml")
+    }
+    afterEvaluate {
+        getClassDirectories().setFrom(classDirectories.files.collect {
+            fileTree(dir: it,
+                exclude: [
+           //   exclude 'com/abernathyclinic/mediscreen/service_sql/user/*.class' // Exclude the POJO package
+                ] 
+            )
+        })
+  }
+}
+
+jacocoTestCoverageVerification {
+  violationRules {
+    rule {
+  //   exclude 'com/abernathyclinic/mediscreen/service_sql/user/*.class' // Exclude the POJO package
+      limit {
+        counter = 'LINE'
+        value = 'COVEREDRATIO'
+        minimum = 0.5
+      }
+    }
+  }
+}
+}
