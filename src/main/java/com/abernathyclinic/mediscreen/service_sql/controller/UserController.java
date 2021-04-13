@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abernathyclinic.mediscreen.service_sql.UserNotFoundException;
 import com.abernathyclinic.mediscreen.service_sql.model.User;
 import com.abernathyclinic.mediscreen.service_sql.repository.UserRepository;
 
@@ -34,16 +35,16 @@ public class UserController {
 	}
 
 	/**
-	 * GET mapping to retrieve a user from the database by using his last name and
-	 * first name. <br>
+	 * GET mapping to retrieve a {@link User} from the database by using his last
+	 * name and first name. <br>
 	 * 
 	 * @param lastName and firstName : of the user to retrieve
 	 * @return the user if present in the database, else throw an exception
 	 */
-	@GetMapping("/user/{lastName}{firstName}")
+	@GetMapping("/user{lastName}{firstName}")
 	public User getUser(@RequestParam("lastName") String lastName, @RequestParam("firstName") String firstName) {
-		return userRepository.findByLastName(lastName)
-				.orElseThrow(() -> new NullPointerException("The user with the last name provided : '" + lastName
+		return userRepository.findByLastNameAndFirstName(lastName, firstName)
+				.orElseThrow(() -> new UserNotFoundException("The user with the last name provided : '" + lastName
 						+ "' and first name provided : '" + firstName + "' could not be found in the database."));
 	}
 
@@ -78,7 +79,7 @@ public class UserController {
 	 */
 	@PutMapping("/user/{uuid}")
 	public String updateUser(@PathVariable("uuid") UUID uuid, @Valid @RequestBody User user) {
-		User userToSave = userRepository.findById(uuid).orElseThrow(() -> new NullPointerException(
+		User userToSave = userRepository.findById(uuid).orElseThrow(() -> new UserNotFoundException(
 				"The provided uuid : '" + uuid + "' is not attributed to an existing user."));
 		userToSave.setDateOfBirth(user.getDateOfBirth());
 		userToSave.setFirstName(user.getFirstName());
@@ -100,9 +101,9 @@ public class UserController {
 	 */
 	@DeleteMapping("/user/{uuid}")
 	public String deleteUser(@PathVariable("uuid") UUID uuid) {
-		User user = userRepository.findById(uuid).orElseThrow(() -> new NullPointerException(
+		User user = userRepository.findById(uuid).orElseThrow(() -> new UserNotFoundException(
 				"The provided uuid : '" + uuid + "' is not attributed to an existing user."));
 		userRepository.delete(user);
-		return "The user have been sucessfully deleted from the database.";
+		return "The user have been sucessfully deleted in the database.";
 	}
 }
