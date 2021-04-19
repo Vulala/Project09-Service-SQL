@@ -18,7 +18,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '2.4.4'
-	
+	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0' // Swagger
+
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -37,10 +38,10 @@ jacocoTestReport {
 	finalizedBy jacocoTestCoverageVerification // End with a jacoco code coverage verification
 
     reports {
-        xml.enabled true
+        xml.enabled false
         csv.enabled false
         html.enabled true
-        html.destination file("build/reports/jacocoHtml")
+        html.destination file("build/jacoco/reports/jacocoHtml")
     }
     afterEvaluate {
         getClassDirectories().setFrom(classDirectories.files.collect {
@@ -58,7 +59,7 @@ jacocoTestCoverageVerification {
       limit {
         counter = 'LINE'
         value = 'COVEREDRATIO'
-        minimum = 0.5
+        minimum = 0.85
       }
     }
   }
