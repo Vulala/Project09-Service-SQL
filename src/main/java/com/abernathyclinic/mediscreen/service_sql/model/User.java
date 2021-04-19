@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
  * contains a small validation on fields. <br>
  */
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "abernathyclinic_mediscreen")
 public class User {
 
 	@Id

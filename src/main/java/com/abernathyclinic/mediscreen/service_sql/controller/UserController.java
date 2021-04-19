@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abernathyclinic.mediscreen.service_sql.UserNotFoundException;
@@ -39,28 +41,32 @@ public class UserController {
 	 * name and first name. <br>
 	 * 
 	 * @param lastName and firstName : of the user to retrieve
-	 * @return the user if present in the database, else throw an exception
+	 * @return the user if present in the database, else throw a
+	 *         {@link UserNotFoundException}
 	 */
 	@GetMapping("/user{lastName}{firstName}")
 	public User getUser(@RequestParam("lastName") String lastName, @RequestParam("firstName") String firstName) {
 		return userRepository.findByLastNameAndFirstName(lastName, firstName)
 				.orElseThrow(() -> new UserNotFoundException("The user with the last name provided : '" + lastName
 						+ "' and first name provided : '" + firstName + "' could not be found in the database."));
+
 	}
 
 	/**
 	 * POST mapping to save a {@link User} and save it in the database. <br>
-	 * It firstly verify that the user created sucessfully satisfy the constraints
-	 * set on the entity. <br>
+	 * It firstly verifies that the user created successfully satisfies the
+	 * constraints set on the entity. <br>
 	 * 
-	 * @param user   : to save
-	 * @param result : verify that the user to save satisfy the constraints
+	 * @param user          : to save
+	 * @param bindingResult : verifies that the user to save satisfies the
+	 *                      constraints
 	 * @return a success message if the request is a success, else throw an
 	 *         exception
 	 */
+	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping("/user")
-	public String saveUser(@RequestBody @Valid User user, BindingResult result) {
-		if (result.hasErrors()) {
+	public String saveUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
 			throw new IllegalArgumentException(
 					"The user provided : '" + user.toString() + "' doesn't satisfy the required fields.");
 		}
@@ -71,11 +77,12 @@ public class UserController {
 
 	/**
 	 * PUT mapping to update an existing {@link User} in the database. <br>
-	 * It firstly verify that the user to update is present in the database. <br>
+	 * It firstly verifies that the user to update is present in the database. <br>
 	 * 
-	 * @param user : to update
-	 * @return a success message if the request is a success, else throw an
-	 *         exception
+	 * @param uuid : of the user to update
+	 * @param user : the informations to update
+	 * @return a success message if the request is a success, else throw a
+	 *         {@link UserNotFoundException}
 	 */
 	@PutMapping("/user/{uuid}")
 	public String updateUser(@PathVariable("uuid") UUID uuid, @Valid @RequestBody User user) {
@@ -88,22 +95,24 @@ public class UserController {
 		userToSave.setPhoneNumber(user.getPhoneNumber());
 		userToSave.setSex(user.getSex());
 		userRepository.save(userToSave);
-		return "User sucessfully updated";
+
+		return "User successfully updated";
 	}
 
 	/**
 	 * DELETE mapping used to delete a {@link User}. <br>
-	 * It firstly verify that the user is present in the database. <br>
+	 * It firstly verifies that the user is present in the database. <br>
 	 * 
 	 * @param uuid : of the user to delete
-	 * @return a success message if the request is a success, else throw an
-	 *         exception
+	 * @return a success message if the request is a success, else throw a
+	 *         {@link UserNotFoundException}
 	 */
 	@DeleteMapping("/user/{uuid}")
 	public String deleteUser(@PathVariable("uuid") UUID uuid) {
 		User user = userRepository.findById(uuid).orElseThrow(() -> new UserNotFoundException(
 				"The provided uuid : '" + uuid + "' is not attributed to an existing user."));
 		userRepository.delete(user);
-		return "The user have been sucessfully deleted in the database.";
+
+		return "The user has been successfully deleted in the database.";
 	}
 }

@@ -70,6 +70,22 @@ class UserControllerTest {
 		verify(userRepository, times(1)).findByLastNameAndFirstName("lastName", "firstName");
 	}
 
+	@DisplayName("GET : /user{lastName}{firstName} but it throw an exception because the user is not present in the database")
+	@Test
+	void givenGettingASpecificUserWhoDoesntExist_whenGetUser_thenItThrowAUserNotFoundExceptionWithACorrectHTTPStatusCode()
+			throws Exception {
+		// ARRANGE
+		when(userRepository.findByLastNameAndFirstName("lastName", "firstName")).thenReturn(Optional.of(new User()));
+
+		// ACT
+		MvcResult mvcResult = mockMvc.perform(get("/user?lastName=throw&firstName=exception")).andDo(print())
+				.andReturn();
+		int status = mvcResult.getResponse().getStatus();
+
+		// ASSERT
+		assertEquals(404, status);
+	}
+
 	@DisplayName("POST : /user")
 	@Test
 	void givenSavingAUser_whenSaveUser_thenItSaveTheUserInTheDataBase() throws Exception {
@@ -84,7 +100,7 @@ class UserControllerTest {
 		MockHttpServletResponse response = mvcResult.getResponse();
 
 		// ASSERT
-		assertEquals(200, response.getStatus());
+		assertEquals(201, response.getStatus());
 		assertEquals("User sucessfully saved", response.getContentAsString());
 	}
 
@@ -104,9 +120,27 @@ class UserControllerTest {
 
 		// ASSERT
 		assertEquals(200, response.getStatus());
-		assertEquals("User sucessfully updated", response.getContentAsString());
+		assertEquals("User successfully updated", response.getContentAsString());
 		verify(userRepository, times(1)).findById(randomUUID);
 		verify(userRepository, times(1)).save(userToUpdate);
+	}
+
+	@DisplayName("PUT : /user/{uuid} but it throw an exception because the user is not present in the database")
+	@Test
+	void givenUpdatingAUserWhoDoesntExist_whenUpdateUser_thenItThrowAUserNotFoundExceptionWithACorrectHTTPStatusCode()
+			throws Exception {
+		// ARRANGE
+		User userToUpdate = new User("lastName", "firstName", "dateOfBirth", "sex", "homeAddress", "phoneNumber");
+		UUID randomUUID = UUID.randomUUID();
+		when(userRepository.findById(randomUUID)).thenReturn(Optional.of(userToUpdate));
+
+		// ACT
+		MvcResult mvcResult = mockMvc.perform(put("/user/" + UUID.randomUUID()).contentType(MediaType.APPLICATION_JSON)
+				.content("{\"lastName\": \"throwException\"}")).andDo(print()).andReturn();
+		MockHttpServletResponse response = mvcResult.getResponse();
+
+		// ASSERT
+		assertEquals(404, response.getStatus());
 	}
 
 	@DisplayName("DELETE : /user/{uuid}")
@@ -125,8 +159,27 @@ class UserControllerTest {
 
 		// ASSERT
 		assertEquals(200, response.getStatus());
-		assertEquals("The user have been sucessfully deleted in the database.", response.getContentAsString());
+		assertEquals("The user has been successfully deleted in the database.", response.getContentAsString());
 		verify(userRepository, times(1)).findById(randomUUID);
 		verify(userRepository, times(1)).delete(userToDelete);
+	}
+
+	@DisplayName("DELETE : /user/{uuid} but it throw an exception because the user is not present in the database")
+	@Test
+	void givenDeletingAUserWhoDoesntExist_whenDeleteUser_thenItThrowAUserNotFoundExceptionWithACorrectHTTPStatusCode()
+			throws Exception {
+		// ARRANGE
+		User userToDelete = new User("lastName", "firstName", "dateOfBirth", "sex", "homeAddress", "phoneNumber");
+		UUID randomUUID = UUID.randomUUID();
+		when(userRepository.findById(randomUUID)).thenReturn(Optional.of(userToDelete));
+
+		// ACT
+		MvcResult mvcResult = mockMvc
+				.perform(delete("/user/" + UUID.randomUUID()).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andReturn();
+		MockHttpServletResponse response = mvcResult.getResponse();
+
+		// ASSERT
+		assertEquals(404, response.getStatus());
 	}
 }

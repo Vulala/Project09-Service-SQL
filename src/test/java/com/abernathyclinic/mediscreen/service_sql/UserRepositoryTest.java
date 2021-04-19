@@ -23,12 +23,12 @@ class UserRepositoryTest {
 	@Autowired
 	private TestEntityManager testEntityManager;
 
-	private User userToStoreInDB = new User("lastName", "firstName", "dateOfBirth", "sex", "homeAddress",
-			"phoneNumber");
+//	private User userToStoreInDB = new User("lastName", "firstName", "dateOfBirth", "sex", "homeAddress",
+	// "phoneNumber");
 
 	@BeforeEach
 	void populateTheLocalDatabase() {
-		testEntityManager.persist(userToStoreInDB);
+		// testEntityManager.persist(userToStoreInDB);
 	}
 
 	@DisplayName("Injected Components Are Rightly Setup")
@@ -67,8 +67,11 @@ class UserRepositoryTest {
 	@DisplayName("DELETE : /user/{uuid}")
 	@Test
 	void givenDeletingAUser_whenDeleteUser_thenItDeleteTheUserInTheDataBase() {
+		User userToStoreInDB = new User("lastNameDelete", "firstNameDelete", "00/00/0000Delete", "sexDelete",
+				"homeAddressDelete", "000.000.000");
+		testEntityManager.persist(userToStoreInDB);
 		userRepository.delete(userToStoreInDB);
-		assertTrue(userRepository.findByLastNameAndFirstName("lastName", "firstName").isEmpty());
+		assertTrue(userRepository.findByLastNameAndFirstName("lastNameDelete", "firstNameDelete").isEmpty());
 	}
 
 }
