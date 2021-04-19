@@ -8,16 +8,16 @@ For more information about the available endpoints, feel free to checkout the sw
 
 ## Stack
 
-- ** Java 15 ** *(should run smoothly on older versions)*
-- ** Spring Boot 2.4.4 **
-- ** Spring Boot Data JPA **
-- ** Spring Boot AOP 2.4.4 **
-- ** Spring Boot Test **
-- ** JaCoCo 0.8.6 **
-- ** Swagger 3.0.0 **
-- ** H2 Database **
-- ** PostgreSQL **
-- ** Gradle 6.8.3 **
+- **Java 15** *(should run smoothly on older versions)*
+- **Spring Boot 2.4.4**
+- **Spring Boot Data JPA**
+- **Spring Boot AOP 2.4.4**
+- **Spring Boot Test**
+- **JaCoCo 0.8.6**
+- **Swagger 3.0.0**
+- **H2 Database**
+- **PostgreSQL**
+- **Gradle 6.8.3**
 
 
 
@@ -28,7 +28,7 @@ Then it needs a relational database which can handle the UIID type. Otherwise, y
 Then you can run the SQL script provided under **src/main/resources**; it creates the schema and populates the database with a few data. (*for testing purpose*) <br>
 
 
-** Listen on port: 8081 **
+**Listen on port: 8081**
 
 
 ## Test
@@ -43,8 +43,8 @@ The *schema.sql* script is made mandatory because the user model define the sche
 
 ## Logs
 
-The application is logged by making use of the ** Aspect Oriented Programming **. <br>
-*LoggingAspect* is the class using ** AOP ** which define the logging. <br>
+The application is logged by making use of the **Aspect Oriented Programming**. <br>
+*LoggingAspect* is the class using **AOP** which define the logging. <br>
 
 
 ## Documentation
