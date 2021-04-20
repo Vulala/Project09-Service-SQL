@@ -41,12 +41,13 @@ public class LoggingAspect {
 		logger.info("The execution has ended successfully");
 	}
 
-	@AfterThrowing(pointcut = "controller()", throwing = "userNotFoundException")
-	public void logAfterTheMethodEndWithAnError(JoinPoint joinPoint, UserNotFoundException userNotFoundException) {
+	@AfterThrowing(pointcut = "controller()", throwing = "patientNotFoundException")
+	public void logAfterTheMethodEndWithAnError(JoinPoint joinPoint,
+			PatientNotFoundException patientNotFoundException) {
 		Signature signature = joinPoint.getSignature();
 		String className = signature.getDeclaringType().getSimpleName();
 		String methodName = signature.getName();
 
-		logger.info("The execution of {} in the {} class has failed", methodName, className, userNotFoundException);
+		logger.info("The execution of {} in the {} class has failed", methodName, className, patientNotFoundException);
 	}
 }

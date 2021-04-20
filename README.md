@@ -38,7 +38,7 @@ You can do end-to-end tests by doing HTTP request with the differents endpoints 
 If you wish to add or tweak some tests, you can find them under the traditional **src/test/java** package. <br>
 
 Note that the H2 database make use of the provided scripts, *data.slq* and *schema.sql*, these 2 are mandatory for the H2 database to work properly. <br>
-The *schema.sql* script is made mandatory because the user model define the schema it must use. <br>
+The *schema.sql* script is made mandatory because the patient model define the schema it must use. <br>
 
 
 ## Logs
