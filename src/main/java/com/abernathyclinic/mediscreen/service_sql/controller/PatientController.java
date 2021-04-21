@@ -2,10 +2,10 @@ package com.abernathyclinic.mediscreen.service_sql.controller;
 
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abernathyclinic.mediscreen.service_sql.PatientNotFoundException;
@@ -22,7 +21,7 @@ import com.abernathyclinic.mediscreen.service_sql.model.Patient;
 import com.abernathyclinic.mediscreen.service_sql.repository.PatientRepository;
 
 /**
- * Main controller of the application, it provide CRUD mapping allowing the patient
+ * Main controller of the application, it provide CRUD mapping allowing the user
  * to communicate with a relational database. <br>
  */
 @RestController
@@ -57,44 +56,55 @@ public class PatientController {
 	 * It firstly verifies that the patient created successfully satisfies the
 	 * constraints set on the entity. <br>
 	 * 
-	 * @param patient          : to save
+	 * @param patient       : to save
 	 * @param bindingResult : verifies that the patient to save satisfies the
 	 *                      constraints
 	 * @return a success message if the request is a success, else throw an
 	 *         exception
 	 */
-	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping("/patient")
-	public String savePatient(@Valid @RequestBody Patient patient, BindingResult bindingResult) {
+	public String savePatient(@Valid @RequestBody Patient patient, BindingResult bindingResult,
+			HttpServletResponse httpServletResponse) {
 		if (bindingResult.hasErrors()) {
-			throw new IllegalArgumentException(
-					"The patient provided : '" + patient.toString() + "' doesn't satisfy the required fields.");
-		}
+			httpServletResponse.setStatus(400);
+			return "The patient provided : '" + patient.toString() + "' doesn't satisfy the required field: '"
+					+ bindingResult.getFieldError().getDefaultMessage() + "'.";
 
+		}
+		httpServletResponse.setStatus(201);
 		patientRepository.save(patient);
 		return "Patient sucessfully saved";
 	}
 
 	/**
 	 * PUT mapping to update an existing {@link Patient} in the database. <br>
-	 * It firstly verifies that the patient to update is present in the database. <br>
+	 * It firstly verifies that the patient to update is present in the database.
+	 * <br>
 	 * 
-	 * @param uuid : of the patient to update
+	 * @param uuid    : of the patient to update
 	 * @param patient : the informations to update
 	 * @return a success message if the request is a success, else throw a
 	 *         {@link PatientNotFoundException}
 	 */
 	@PutMapping("/patient/{uuid}")
-	public String updatePatient(@PathVariable("uuid") UUID uuid, @Valid @RequestBody Patient patient) {
-		Patient patientToSave = patientRepository.findById(uuid).orElseThrow(() -> new PatientNotFoundException(
+	public String updatePatient(@PathVariable("uuid") UUID uuid, @Valid @RequestBody Patient patient,
+			BindingResult bindingResult, HttpServletResponse httpServletResponse) {
+		Patient patientToUpdate = patientRepository.findById(uuid).orElseThrow(() -> new PatientNotFoundException(
 				"The provided uuid : '" + uuid + "' is not attributed to an existing patient."));
-		patientToSave.setDateOfBirth(patient.getDateOfBirth());
-		patientToSave.setFirstName(patient.getFirstName());
-		patientToSave.setLastName(patient.getLastName());
-		patientToSave.setHomeAddress(patient.getHomeAddress());
-		patientToSave.setPhoneNumber(patient.getPhoneNumber());
-		patientToSave.setGender(patient.getGender());
-		patientRepository.save(patientToSave);
+
+		if (bindingResult.hasErrors()) {
+			httpServletResponse.setStatus(400);
+			return "The patient provided : '" + patient.toString() + "' doesn't satisfy the required condition: '"
+					+ bindingResult.getFieldError().getDefaultMessage() + "'.";
+		}
+
+		patientToUpdate.setDateOfBirth(patient.getDateOfBirth());
+		patientToUpdate.setFirstName(patient.getFirstName());
+		patientToUpdate.setLastName(patient.getLastName());
+		patientToUpdate.setHomeAddress(patient.getHomeAddress());
+		patientToUpdate.setPhoneNumber(patient.getPhoneNumber());
+		patientToUpdate.setGender(patient.getGender());
+		patientRepository.save(patientToUpdate);
 
 		return "Patient successfully updated";
 	}

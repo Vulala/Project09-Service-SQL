@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * Entity representing a patient, it is also used to define the database and
@@ -21,23 +22,32 @@ public class Patient {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID uuid;
 	@NotBlank(message = "The last name is mandatory")
+	@Size(min = 2, max = 32, message = "The last name must be between 2 and 32 characters")
 	private String lastName;
 	@NotBlank(message = "The first name is mandatory")
+	@Size(min = 2, max = 32, message = "The first name must be between 2 and 32 characters")
 	private String firstName;
 	@NotBlank(message = "The date of birth is mandatory")
+	@Size(min = 8, max = 16, message = "The date of birth must be between 8 and 16 characters")
 	private String dateOfBirth;
 	@NotBlank(message = "The gender is mandatory")
+	@Size(min = 2, max = 32, message = "The gender must be between 2 and 32 characters")
 	private String gender;
+	@Size(min = 1, max = 128, message = "The home address must be between 1 and 128 characters")
 	private String homeAddress;
+	@Size(min = 8, max = 16, message = "The phone number must be between 8 and 16 characters")
 	private String phoneNumber;
 
 	public Patient() {
 	}
 
-	public Patient(@NotBlank(message = "The last name is mandatory") String lastName,
-			@NotBlank(message = "The first name is mandatory") String firstName,
-			@NotBlank(message = "The date of birth is mandatory") String dateOfBirth,
-			@NotBlank(message = "The gender is mandatory") String gender, String homeAddress, String phoneNumber) {
+	public Patient(
+			@NotBlank(message = "The last name is mandatory") @Size(min = 2, max = 32, message = "The last name must be between 2 and 32 characters") String lastName,
+			@NotBlank(message = "The first name is mandatory") @Size(min = 2, max = 32, message = "The first name must be between 2 and 32 characters") String firstName,
+			@NotBlank(message = "The date of birth is mandatory") @Size(min = 8, max = 16, message = "The date of birth must be between 8 and 16 characters") String dateOfBirth,
+			@NotBlank(message = "The gender is mandatory") @Size(min = 2, max = 32, message = "The gender must be between 2 and 32 characters") String gender,
+			@Size(min = 1, max = 128, message = "The home address must be between 1 and 128 characters") String homeAddress,
+			@Size(min = 8, max = 16, message = "The phone number must be between 8 and 16 characters") String phoneNumber) {
 		this.lastName = lastName;
 		this.firstName = firstName;
 		this.dateOfBirth = dateOfBirth;
@@ -100,9 +110,9 @@ public class Patient {
 
 	@Override
 	public String toString() {
-		return "Patient [UUID =" + uuid + ", Last Name :" + lastName + ", First Name :" + firstName
-				+ ", Date Of Birth :" + dateOfBirth + ", Gender :" + gender + ", Home Address :" + homeAddress
-				+ ", Phone Number :" + phoneNumber + "]";
+		return "Patient [UUID: " + uuid + ", Last Name: " + lastName + ", First Name: " + firstName
+				+ ", Date of Birth: " + dateOfBirth + ", Gender: " + gender + ", Home Address: " + homeAddress
+				+ ", Phone Number: " + phoneNumber + "]";
 	}
 
 }

@@ -2,6 +2,7 @@ package com.abernathyclinic.mediscreen.service_sql.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -85,8 +86,8 @@ class PatientControllerIT {
 	@Test
 	void givenSavingAPatient_whenSavePatient_thenItSaveThePatientInTheDataBase() throws Exception {
 		// ACT
-		MvcResult mvcResult = mockMvc.perform(
-				post("/patient").contentType(MediaType.APPLICATION_JSON).content("{\"lastName\": \"nameLast\"}"))
+		MvcResult mvcResult = mockMvc.perform(post("/patient").contentType(MediaType.APPLICATION_JSON).content(
+				"{\"lastName\": \"lastName\",\"firstName\": \"firstName\",\"dateOfBirth\": \"dateOfBirth\",\"gender\": \"gender\"}"))
 				.andDo(print()).andReturn();
 		MockHttpServletResponse response = mvcResult.getResponse();
 
@@ -95,13 +96,29 @@ class PatientControllerIT {
 		assertEquals("Patient sucessfully saved", response.getContentAsString());
 	}
 
+	@DisplayName("POST : /patient but a mandatory field is missing")
+	@Test
+	void givenSavingAPatientWithAMissingField_whenSavePatient_thenItDoesNotSaveThePatientInTheDataBase()
+			throws Exception {
+		// ACT
+		MvcResult mvcResult = mockMvc.perform(
+				post("/patient").contentType(MediaType.APPLICATION_JSON).content("{\"lastName\": \"lastName\"}"))
+				.andDo(print()).andReturn();
+		MockHttpServletResponse response = mvcResult.getResponse();
+
+		// ASSERT
+		assertEquals(400, response.getStatus());
+		assertNotEquals("Patient sucessfully saved", response.getContentAsString());
+	}
+
 	@DisplayName("PUT : /patient/{uuid}")
 	@Test
 	void givenUpdatingAPatient_whenUpdatePatient_thenItUpdateThePatientInTheDataBase() throws Exception {
 		// ACT
-		MvcResult mvcResult = mockMvc.perform(put("/patient/" + uuidOfThePatientInDB)
-				.contentType(MediaType.APPLICATION_JSON).content("{\"lastName\": \"nameLast\"}")).andDo(print())
-				.andReturn();
+		MvcResult mvcResult = mockMvc
+				.perform(put("/patient/" + uuidOfThePatientInDB).contentType(MediaType.APPLICATION_JSON).content(
+						"{\"lastName\": \"lastName\",\"firstName\": \"firstName\",\"dateOfBirth\": \"dateOfBirth\",\"gender\": \"gender\"}"))
+				.andDo(print()).andReturn();
 		MockHttpServletResponse response = mvcResult.getResponse();
 
 		// ASSERT
@@ -115,12 +132,27 @@ class PatientControllerIT {
 			throws Exception {
 		// ACT
 		MvcResult mvcResult = mockMvc.perform(put("/patient/" + UUID.randomUUID())
-				.contentType(MediaType.APPLICATION_JSON).content("{\"lastName\": \"nameLast\"}")).andDo(print())
+				.contentType(MediaType.APPLICATION_JSON).content("{\"lastName\": \"lastName\"}")).andDo(print())
 				.andReturn();
 		MockHttpServletResponse response = mvcResult.getResponse();
 
 		// ASSERT
 		assertEquals(404, response.getStatus());
+	}
+
+	@DisplayName("PUT : /patient/{uuid} but a mandatory field is missing")
+	@Test
+	void givenUpdatingAPatientWithAMissingField_whenUpdatePatient_thenItDoesNotUpdateThePatientInTheDataBase()
+			throws Exception {
+		// ACT
+		MvcResult mvcResult = mockMvc.perform(put("/patient/" + uuidOfThePatientInDB)
+				.contentType(MediaType.APPLICATION_JSON).content("{\"lastName\": \"lastName\"}")).andDo(print())
+				.andReturn();
+		MockHttpServletResponse response = mvcResult.getResponse();
+
+		// ASSERT
+		assertEquals(400, response.getStatus());
+		assertNotEquals("Patient sucessfully saved", response.getContentAsString());
 	}
 
 	@DisplayName("DELETE : /patient/{uuid}")
