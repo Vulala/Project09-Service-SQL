@@ -121,7 +121,7 @@ class PatientControllerTest {
 		MockHttpServletResponse response = mvcResult.getResponse();
 
 		// ASSERT
-		assertEquals(400, response.getStatus());
+		assertEquals(200, response.getStatus());
 		assertNotEquals("Patient sucessfully saved", response.getContentAsString());
 	}
 
@@ -180,7 +180,7 @@ class PatientControllerTest {
 		MockHttpServletResponse response = mvcResult.getResponse();
 
 		// ASSERT
-		assertEquals(400, response.getStatus());
+		assertEquals(200, response.getStatus());
 		assertNotEquals("Patient successfully updated", response.getContentAsString());
 		verify(patientRepository, times(1)).findById(randomUUID);
 		verify(patientRepository, times(0)).save(patientToUpdate);

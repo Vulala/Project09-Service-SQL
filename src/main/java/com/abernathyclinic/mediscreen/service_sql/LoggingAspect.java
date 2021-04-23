@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.abernathyclinic.mediscreen.service_sql.exception.PatientNotFoundException;
+
 /**
  * LoggingAspect is a class which use Spring Boot AOP dependency. <br>
  * AOP is used here to handle all the logging for the controller package. <br>

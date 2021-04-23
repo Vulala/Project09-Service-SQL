@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abernathyclinic.mediscreen.service_sql.PatientNotFoundException;
+import com.abernathyclinic.mediscreen.service_sql.exception.BodyNotValidException;
+import com.abernathyclinic.mediscreen.service_sql.exception.PatientNotFoundException;
 import com.abernathyclinic.mediscreen.service_sql.model.Patient;
 import com.abernathyclinic.mediscreen.service_sql.repository.PatientRepository;
 
@@ -59,18 +60,18 @@ public class PatientController {
 	 * @param patient       : to save
 	 * @param bindingResult : verifies that the patient to save satisfies the
 	 *                      constraints
-	 * @return a success message if the request is a success, else throw an
-	 *         exception
+	 * @return a success message if the request is a success, else throw a
+	 *         {@link BodyNotValidException}
 	 */
 	@PostMapping("/patient")
 	public String savePatient(@Valid @RequestBody Patient patient, BindingResult bindingResult,
 			HttpServletResponse httpServletResponse) {
 		if (bindingResult.hasErrors()) {
-			httpServletResponse.setStatus(400);
-			return "The patient provided : '" + patient.toString() + "' doesn't satisfy the required field: '"
-					+ bindingResult.getFieldError().getDefaultMessage() + "'.";
-
+			return new BodyNotValidException(
+					"The patient provided : '" + patient.toString() + "' doesn't satisfy the required field: '"
+							+ bindingResult.getFieldError().getDefaultMessage() + "'.").toString();
 		}
+
 		httpServletResponse.setStatus(201);
 		patientRepository.save(patient);
 		return "Patient sucessfully saved";
@@ -84,7 +85,8 @@ public class PatientController {
 	 * @param uuid    : of the patient to update
 	 * @param patient : the informations to update
 	 * @return a success message if the request is a success, else throw a
-	 *         {@link PatientNotFoundException}
+	 *         {@link PatientNotFoundException} or a {@link BodyNotValidException}
+	 *         depending of what went wrong
 	 */
 	@PutMapping("/patient/{uuid}")
 	public String updatePatient(@PathVariable("uuid") UUID uuid, @Valid @RequestBody Patient patient,
@@ -93,9 +95,9 @@ public class PatientController {
 				"The provided uuid : '" + uuid + "' is not attributed to an existing patient."));
 
 		if (bindingResult.hasErrors()) {
-			httpServletResponse.setStatus(400);
-			return "The patient provided : '" + patient.toString() + "' doesn't satisfy the required condition: '"
-					+ bindingResult.getFieldError().getDefaultMessage() + "'.";
+			return new BodyNotValidException(
+					"The patient provided : '" + patient.toString() + "' doesn't satisfy the required field: '"
+							+ bindingResult.getFieldError().getDefaultMessage() + "'.").toString();
 		}
 
 		patientToUpdate.setDateOfBirth(patient.getDateOfBirth());
