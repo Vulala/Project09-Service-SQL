@@ -57,11 +57,12 @@ class PatientControllerIT {
 		assertEquals(200, status);
 	}
 
-	@DisplayName("GET : /patient{lastName}{firstName}")
+	@DisplayName("GET : /patient/{UUID}")
 	@Test
-	void givenGettingASpecificPatient_whenGetPatient_thenItReturnTheRightPatientFromTheDataBase() throws Exception {
+	void givenGettingASpecificPatientUsingTheUUID_whenGetPatientByUUID_thenItReturnTheRightPatientFromTheDataBase()
+			throws Exception {
 		// ACT
-		MvcResult mvcResult = mockMvc.perform(get("/patient?lastName=lastName&firstName=firstName")).andDo(print())
+		MvcResult mvcResult = mockMvc.perform(get("/patient/b42a8ef5-8baa-4bc2-89aa-d18cdc3239f9")).andDo(print())
 				.andReturn();
 		int status = mvcResult.getResponse().getStatus();
 
@@ -69,17 +70,40 @@ class PatientControllerIT {
 		assertEquals(200, status);
 	}
 
-	@DisplayName("GET : /patient{lastName}{firstName} but it throw an exception because the entity is not present in the database")
+	@DisplayName("GET : /patient/lastName&firstName")
+	@Test
+	void givenGettingASpecificPatient_whenGetPatient_thenItReturnTheRightPatientFromTheDataBase() throws Exception {
+		// ACT
+		MvcResult mvcResult = mockMvc.perform(get("/patient/lastName&firstName?lastName=lastName&firstName=firstName"))
+				.andDo(print()).andReturn();
+		int status = mvcResult.getResponse().getStatus();
+
+		// ASSERT
+		assertEquals(200, status);
+	}
+
+	@DisplayName("GET : /patient/lastName&firstName but it throw an exception because the entity is not present in the database")
 	@Test
 	void givenGettingASpecificPatientWhoDoesntExist_whenGetPatient_thenItThrowAPatientNotFoundExceptionWithACorrectHTTPStatusCode()
 			throws Exception {
 		// ACT
-		MvcResult mvcResult = mockMvc.perform(get("/patient?lastName=throw&firstName=exception")).andDo(print())
-				.andReturn();
+		MvcResult mvcResult = mockMvc.perform(get("/patient/lastName&firstName?lastName=throw&firstName=exception"))
+				.andDo(print()).andReturn();
 		int status = mvcResult.getResponse().getStatus();
 
 		// ASSERT
 		assertEquals(404, status);
+	}
+
+	@DisplayName("GET : /patient")
+	@Test
+	void givenGettingAllPatients_whenGetAllPatients_thenItReturnAllThePatientsFromTheDataBase() throws Exception {
+		// ACT
+		MvcResult mvcResult = mockMvc.perform(get("/patient")).andDo(print()).andReturn();
+		int status = mvcResult.getResponse().getStatus();
+
+		// ASSERT
+		assertEquals(200, status);
 	}
 
 	@DisplayName("POST : /patient")

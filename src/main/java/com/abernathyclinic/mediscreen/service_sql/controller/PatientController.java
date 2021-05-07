@@ -1,5 +1,6 @@
 package com.abernathyclinic.mediscreen.service_sql.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,20 @@ public class PatientController {
 	}
 
 	/**
+	 * GET mapping to retrieve a {@link Patient} from the database by using his
+	 * UUID. <br>
+	 * 
+	 * @param UUID : of the patient to retrieve
+	 * @return the patient if present in the database, else throw an error message
+	 */
+	@GetMapping("/patient/{UUID}")
+	public Patient getPatientByUUID(@PathVariable("UUID") UUID uuid) {
+		return patientRepository.findById(uuid).orElseThrow(() -> new PatientNotFoundException(
+				"The patient with the provided UUID : '" + uuid + "' could not be found in the database."));
+
+	}
+
+	/**
 	 * GET mapping to retrieve a {@link Patient} from the database by using his last
 	 * name and first name. <br>
 	 * 
@@ -44,12 +59,22 @@ public class PatientController {
 	 * @return the patient if present in the database, else throw a
 	 *         {@link PatientNotFoundException}
 	 */
-	@GetMapping("/patient{lastName}{firstName}")
+	@GetMapping("/patient/lastName&firstName")
 	public Patient getPatient(@RequestParam("lastName") String lastName, @RequestParam("firstName") String firstName) {
 		return patientRepository.findByLastNameAndFirstName(lastName, firstName)
 				.orElseThrow(() -> new PatientNotFoundException("The patient with the last name provided : '" + lastName
 						+ "' and first name provided : '" + firstName + "' could not be found in the database."));
 
+	}
+
+	/**
+	 * GET mapping to retrieve all {@link Patient} from the database. <br>
+	 * 
+	 * @return all the patients present in the database
+	 */
+	@GetMapping("/patient")
+	public List<Patient> getAllPatients() {
+		return patientRepository.findAll();
 	}
 
 	/**

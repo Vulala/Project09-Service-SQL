@@ -2,7 +2,10 @@ package com.abernathyclinic.mediscreen.service_sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,10 +32,30 @@ class PatientRepositoryTest {
 		assertThat(testEntityManager).isNotNull();
 	}
 
-	@DisplayName("GET : /patient{lastName}{firstName}")
+	@DisplayName("GET : /patient/{UUID}")
+	@Test
+	void givenGettingASpecificPatientUsingTheUUID_whenGetPatientByUUID_thenItReturnTheRightPatientFromTheDataBase() {
+		UUID uuid = UUID.fromString("b42a8ef5-8baa-4bc2-89aa-d18cdc3239f9");
+		assertTrue(patientRepository.findById(uuid).isPresent());
+	}
+
+	@DisplayName("GET : /patient/{UUID} but it throw an exception because the patient is not present in the database")
+	@Test
+	void givenGettingASpecificPatientUsingTheUUIDButWhoDoesntExist_whenGetPatientByUUID_thenItThrowAPatientNotFoundExceptionWithACorrectHTTPStatusCode() {
+		UUID uuid = UUID.fromString("b42a8ef5-8baa-4bc2-89aa-d18cdc3239f8");
+		assertFalse(patientRepository.findById(uuid).isPresent());
+	}
+
+	@DisplayName("GET : /patient/lastName&firstName")
 	@Test
 	void givenGettingASpecificPatient_whenGetPatient_thenItReturnTheRightPatientFromTheDataBase() {
 		assertTrue(patientRepository.findByLastNameAndFirstName("lastName", "firstName").isPresent());
+	}
+
+	@DisplayName("GET : /patient")
+	@Test
+	void givenGettingAllPatients_whenGetPatients_thenItReturnAllThePatientsFromTheDataBase() {
+		assertFalse(patientRepository.findAll().isEmpty());
 	}
 
 	@DisplayName("POST : /patient")

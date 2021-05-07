@@ -2,7 +2,10 @@ package com.abernathyclinic.mediscreen.service_sql.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,10 +30,23 @@ class PatientRepositoryIT {
 		assertThat(patientRepository).isNotNull();
 	}
 
-	@DisplayName("GET : /patient{lastName}{firstName}")
+	@DisplayName("GET : /patient/{UUID}")
+	@Test
+	void givenGettingASpecificPatientUsingTheUUID_whenGetPatientByUUID_thenItReturnTheRightPatientFromTheDataBase() {
+		UUID uuid = UUID.fromString("b42a8ef5-8baa-4bc2-89aa-d18cdc3239f9");
+		assertTrue(patientRepository.findById(uuid).isPresent());
+	}
+
+	@DisplayName("GET : /patient/lastName&firstName")
 	@Test
 	void givenGettingASpecificPatient_whenGetPatient_thenItReturnTheRightPatientFromTheDataBase() {
 		assertTrue(patientRepository.findByLastNameAndFirstName("lastName", "firstName").isPresent());
+	}
+
+	@DisplayName("GET : /patient")
+	@Test
+	void givenGettingAllPatients_whenGetPatients_thenItReturnAllThePatientsFromTheDataBase() {
+		assertFalse(patientRepository.findAll().isEmpty());
 	}
 
 	@DisplayName("POST : /patient")
@@ -50,7 +66,8 @@ class PatientRepositoryIT {
 		patientToUpdate.setGender("Ternary");
 		patientRepository.save(patientToUpdate);
 
-		assertEquals("Ternary", patientRepository.findByLastNameAndFirstName("lastName", "firstName").get().getGender());
+		assertEquals("Ternary",
+				patientRepository.findByLastNameAndFirstName("lastName", "firstName").get().getGender());
 	}
 
 	@DisplayName("DELETE : /patient/{uuid}")
