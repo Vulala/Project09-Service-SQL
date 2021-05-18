@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+
+ db-postgresql:
+  container_name : db-postgresql
+  image: db-postgresql
+  build: ./PostgresContainer
+  network_mode: "bridge"
+  ports:
+   - "5432:5432"
+  environment:
+   POSTGRES_USER: postgres
+   POSTGRES_PASSWORD: rootroot
+   POSTGRES_DB: abernathyclinic_mediscreen
+   SCHEMA: abernathyclinic_mediscreen

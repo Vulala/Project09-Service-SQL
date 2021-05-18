@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+
+ mediscreen:
+  container_name : mediscreen
+  image: mediscreen
+  build: ./MediscreenContainer
+  network_mode: "host"
+
+ service-sql:
+  container_name : service-sql
+  image: servicesql
+  build: ./Service-SQLContainer
+  network_mode: "host"
+  environment:
+   SPRING_DATASOURCE_URL: jdbc:postgresql://172.17.0.2:5432/abernathyclinic_mediscreen
