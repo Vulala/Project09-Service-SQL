@@ -31,7 +31,7 @@ public class Patient {
 	@Size(min = 8, max = 16, message = "The date of birth must be between 8 and 16 characters")
 	private String dateOfBirth;
 	@NotBlank(message = "The gender is mandatory")
-	@Size(min = 2, max = 32, message = "The gender must be between 2 and 32 characters")
+	@Size(min = 1, max = 32, message = "The gender must be between 1 and 32 characters")
 	private String gender;
 	@Size(min = 1, max = 128, message = "The home address must be between 1 and 128 characters")
 	private String homeAddress;
@@ -45,7 +45,7 @@ public class Patient {
 			@NotBlank(message = "The last name is mandatory") @Size(min = 2, max = 32, message = "The last name must be between 2 and 32 characters") String lastName,
 			@NotBlank(message = "The first name is mandatory") @Size(min = 2, max = 32, message = "The first name must be between 2 and 32 characters") String firstName,
 			@NotBlank(message = "The date of birth is mandatory") @Size(min = 8, max = 16, message = "The date of birth must be between 8 and 16 characters") String dateOfBirth,
-			@NotBlank(message = "The gender is mandatory") @Size(min = 2, max = 32, message = "The gender must be between 2 and 32 characters") String gender,
+			@NotBlank(message = "The gender is mandatory") @Size(min = 1, max = 32, message = "The gender must be between 1 and 32 characters") String gender,
 			@Size(min = 1, max = 128, message = "The home address must be between 1 and 128 characters") String homeAddress,
 			@Size(min = 8, max = 16, message = "The phone number must be between 8 and 16 characters") String phoneNumber) {
 		this.lastName = lastName;
