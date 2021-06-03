@@ -15,6 +15,6 @@ CREATE TABLE abernathyclinic_mediscreen.patients
 
 INSERT INTO abernathyclinic_mediscreen.patients(
 	uuid, last_name, first_name, date_of_birth, gender, home_address, phone_number)
-VALUES ('b42a8ef5-8baa-4bc2-89aa-d18cdc3239f9', 'lastName', 'firstName', '00/00/0000', 'Binary', 'homeAddress', '123.456.789');
+VALUES ('b42a8ef5-8baa-4bc2-89aa-d18cdc3239f9', 'lastName', 'firstName', '01/01/0001', 'Binary', 'homeAddress', '123.456.789');
 SELECT * FROM abernathyclinic_mediscreen.patients;
 EOSQL
